@@ -23,26 +23,27 @@ func main() {
 func handleItems(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
-		newItem := Item{}
-		//var newItem Item
-		if err := json.NewDecoder(r.Body).Decode(&newItem); err != nil {
+		newItem := Item{} //var newItem Item
+		err := json.NewDecoder(r.Body).Decode(&newItem)
+		if err != nil {
 			fmt.Println(newItem)
 			fmt.Print("error:")
 			http.Error(w, "error decoding json", http.StatusBadRequest)
 			return
 		}
 
-		defer r.Body.Close()
+		//defer r.Body.Close()
 
 		newItem.ID = fmt.Sprintf("%d", len(items)+1)
 		items[newItem.ID] = newItem
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusCreated)
-		if err := json.NewEncoder(w).Encode(newItem); err != nil {
-			fmt.Println("error is whole encodinf json", err.Error())
-			return
-		}
+		json.NewEncoder(w).Encode(newItem)
+		//if err := json.NewEncoder(w).Encode(newItem); err != nil {
+		//	fmt.Println("error is whole encodinf json", err.Error())
+		//	return
+		//}
 	default:
 		fmt.Println("method not allowed")
 		return
